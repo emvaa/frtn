@@ -609,17 +609,55 @@ table tbody tr:hover {
         padding: 0.5rem 0.75rem;
     }
 
+    /* Asegurar que los selects en filtros sean full width */
+    .card select:not([style*="width"]),
+    .card input[type="text"]:not([style*="width"]),
+    .card input[type="search"]:not([style*="width"]) {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Grid de edificios responsive */
+    div[style*="grid-template-columns: repeat(auto-fill"] {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Mejorar espaciado en page-header */
+    .page-header {
+        margin-bottom: 1.5rem;
+    }
+
+    /* Ajustar padding en main-content */
+    .main-content {
+        padding-bottom: calc(var(--mobile-bottom-nav-height, 0px) + 1rem);
+    }
+
     /* Botones móviles */
-    .btn {
+    .btn:not(.btn-sm) {
         width: 100%;
         padding: 0.875rem 1rem;
         font-size: 0.9375rem;
         justify-content: center;
+        margin-bottom: 0.5rem;
     }
 
     .btn-sm {
         width: auto;
         padding: 0.5rem 0.75rem;
+        margin-bottom: 0;
+    }
+
+    /* Botones en formularios - mantener flex en contenedores de botones */
+    form > div[style*="display: flex"]:last-child .btn,
+    form > div[style*="display: flex"]:last-child button {
+        margin-bottom: 0;
+    }
+
+    /* Excepciones: botones en línea con otros elementos */
+    .card-header .btn,
+    .card-header button {
+        width: auto;
+        margin-bottom: 0;
     }
 
     /* Formularios */
@@ -628,6 +666,46 @@ table tbody tr:hover {
     .form-group textarea {
         font-size: 16px; /* Evita zoom en iOS */
         padding: 0.875rem;
+    }
+
+    /* Grids de formularios - convertir a 1 columna en móvil */
+    .form-group > div[style*="grid-template-columns"],
+    form > div[style*="grid-template-columns: 1fr 1fr"],
+    div[style*="grid-template-columns: 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+
+    /* Contenedores con display: flex en cards - ajustar para móvil */
+    .card > div[style*="display: flex"]:not(:last-child) {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    /* Botones en contenedores flex dentro de cards */
+    .card > div[style*="display: flex"] > button:not(.btn-sm),
+    .card > div[style*="display: flex"] > select {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Selects y inputs en contenedores flex dentro de cards */
+    .card > div[style*="display: flex"] > select,
+    .card > div[style*="display: flex"] > input[type="text"],
+    .card > div[style*="display: flex"] > input[type="search"] {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Formularios - mantener flex en botones finales */
+    form > div[style*="display: flex"]:last-child {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    form > div[style*="display: flex"]:last-child > button {
+        width: 100%;
+        margin-bottom: 0;
     }
 
     /* Toast notifications */
