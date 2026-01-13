@@ -20,24 +20,29 @@ const API_URL = (() => {
     // Prioridad 4: Detectar si estamos en Capacitor (Android/iOS)
     const isCapacitor = typeof window !== 'undefined' && window.Capacitor;
     if (isCapacitor) {
-        // En móvil, usar API en la nube (configurar esta URL)
-        // Por defecto, intenta usar una URL común o la que configures
-        const cloudApiUrl = 'https://bckn.onrender.com'; // CAMBIAR ESTA URL
-        return cloudApiUrl;
+        // En móvil, usar API en la nube
+        return 'https://bckn.onrender.com/api';
     }
     
     const hostname = window.location.hostname;
     const protocol = window.location.protocol;
-    const port = window.location.port;
     
     // Prioridad 5: Desarrollo local (navegador)
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
         return 'http://localhost:3000/api';
     }
     
-    // Prioridad 6: Producción - misma IP, puerto 3000
-    // Si el frontend está en http://192.168.1.100:8080
-    // El backend estará en http://192.168.1.100:3000
+    // ✅ Prioridad 6: Producción web (Vercel / Netlify / etc)
+    const isProductionHost =
+        hostname.endsWith('vercel.app') ||
+        hostname.endsWith('netlify.app') ||
+        hostname.endsWith('github.io');
+
+    if (isProductionHost) {
+        return 'https://bckn.onrender.com/api';
+    }
+    
+    // Prioridad 7: Red local (misma IP, puerto 3000)
     return `${protocol}//${hostname}:3000/api`;
 })();
 
