@@ -22,7 +22,7 @@ const API_URL = (() => {
     if (isCapacitor) {
         // En móvil, usar API en la nube (configurar esta URL)
         // Por defecto, intenta usar una URL común o la que configures
-        const cloudApiUrl = 'https://bckn.onrender.com/'; // CAMBIAR ESTA URL
+        const cloudApiUrl = 'https://bckn.onrender.com/api'; // CAMBIAR ESTA URL
         return cloudApiUrl;
     }
     
