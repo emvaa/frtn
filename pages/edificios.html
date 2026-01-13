@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edificios - Gestión</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>🏢 Gestión</h2>
+                <div class="user-info">
+                    <div id="userName">Cargando...</div>
+                    <div id="userRole" style="font-size: 0.75rem;"></div>
+                </div>
+            </div>
+            <nav class="sidebar-menu" id="sidebarMenu"></nav>
+            <div class="sidebar-footer">
+                <button class="btn-logout" onclick="logout()">🚪 Cerrar Sesión</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1>🏢 Edificios</h1>
+                <p>Gestión de edificios</p>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+    <button class="btn btn-success" onclick="window.location.href='nuevo-edificio.html'">
+        ➕ Nuevo Edificio
+    </button>
+    <button class="btn btn-primary" onclick="cargarEdificios()">
+        🔄 Actualizar
+    </button>
+</div>
+
+            <!-- Grid de edificios -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;" id="edificiosGrid">
+                <div class="loading" style="grid-column: 1/-1;">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/menu.js"></script>
+    <script src="../js/edificios.js"></script>
+    <script src="../js/notifications.js"></script>
+    <script src="../js/mobile-auto.js"></script>
+</body>
+</html>

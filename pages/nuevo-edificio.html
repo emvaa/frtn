@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Edificio - Gestión</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>🏢 Gestión</h2>
+                <div class="user-info">
+                    <div id="userName">Cargando...</div>
+                    <div id="userRole" style="font-size: 0.75rem;"></div>
+                </div>
+            </div>
+            <nav class="sidebar-menu" id="sidebarMenu"></nav>
+            <div class="sidebar-footer">
+                <button class="btn-logout" onclick="logout()">🚪 Cerrar Sesión</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1>🏢 Nuevo Edificio</h1>
+                <p>Registrar un nuevo edificio</p>
+            </div>
+
+            <div class="card" style="max-width: 600px;">
+                <form id="edificioForm">
+                    <div class="form-group">
+                        <label for="nombre">Nombre del Edificio *</label>
+                        <input 
+                            type="text" 
+                            id="nombre" 
+                            required 
+                            placeholder="Ej: Edificio Central"
+                            style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="direccion">Dirección *</label>
+                        <input 
+                            type="text" 
+                            id="direccion" 
+                            required 
+                            placeholder="Ej: Av. España c/ Brasil"
+                            style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ciudad">Ciudad</label>
+                        <input 
+                            type="text" 
+                            id="ciudad" 
+                            placeholder="Asunción"
+                            value="Asunción"
+                            style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="totalPisos">Total de Pisos</label>
+                        <input 
+                            type="number" 
+                            id="totalPisos" 
+                            min="1"
+                            value="1"
+                            placeholder="1"
+                            style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
+                        >
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                        <button type="submit" class="btn btn-primary" style="flex: 1;">
+                            ✅ Crear Edificio
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="window.location.href='edificios.html'" style="flex: 1;">
+                            ❌ Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/menu.js"></script>
+    <script src="../js/notifications.js"></script>
+    <script src="../js/nuevo-edificio.js"></script>
+    <script src="../js/mobile-auto.js"></script>
+</body>
+</html>

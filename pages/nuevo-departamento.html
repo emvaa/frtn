@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Departamento - Gestión</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>🏢 Gestión</h2>
+                <div class="user-info">
+                    <div id="userName">Cargando...</div>
+                    <div id="userRole" style="font-size: 0.75rem;"></div>
+                </div>
+            </div>
+            <nav class="sidebar-menu" id="sidebarMenu"></nav>
+            <div class="sidebar-footer">
+                <button class="btn-logout" onclick="logout()">🚪 Cerrar Sesión</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1>🚪 Nuevo Departamento</h1>
+                <p>Registrar un nuevo departamento</p>
+            </div>
+
+            <div class="card" style="max-width: 700px;">
+                <form id="departamentoForm">
+                    <div class="form-group">
+                        <label for="edificioId">Edificio *</label>
+                        <select id="edificioId" required style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);">
+                            <option value="">Seleccione un edificio</option>
+                        </select>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="numero">Número *</label>
+                            <input 
+                                type="text" 
+                                id="numero" 
+                                required 
+                                placeholder="Ej: 101, A-3"
+                                style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="piso">Piso *</label>
+                            <input 
+                                type="number" 
+                                id="piso" 
+                                required 
+                                min="1"
+                                placeholder="1"
+                                style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
+                            >
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="habitaciones">Habitaciones *</label>
+                            <input 
+                                type="number" 
+                                id="habitaciones" 
+                                required 
+                                min="1"
+                                placeholder="2"
+                                style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="banos">Baños *</label>
+                            <input 
+                                type="number" 
+                                id="banos" 
+                                required 
+                                min="1"
+                                placeholder="1"
+                                style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="precio">Precio por Día (Gs) *</label>
+                        <input 
+                            type="number" 
+                            id="precio" 
+                            required 
+                            min="0"
+                            placeholder="Ej: 150000"
+                            style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
+                        >
+                        <small style="color: var(--text-secondary);">💡 El precio es por DÍA. Se calculará automáticamente según los días de estadía.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="descripcion">Descripción</label>
+                        <textarea 
+                            id="descripcion" 
+                            rows="3"
+                            placeholder="Descripción adicional del departamento..."
+                            style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius); width: 100%;"
+                        ></textarea>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                        <button type="submit" class="btn btn-primary" style="flex: 1;">
+                            ✅ Crear Departamento
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="window.location.href='departamentos.html'" style="flex: 1;">
+                            ❌ Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/menu.js"></script>
+    <script src="../js/notifications.js"></script>
+    <script src="../js/nuevo-departamento.js"></script>
+    <script src="../js/mobile-auto.js"></script>
+</body>
+</html>

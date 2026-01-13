@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario - Gestión</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        .calendario-container {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .calendario-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .mes-navegacion {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .btn-mes {
+            padding: 0.5rem 1rem;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1.25rem;
+        }
+        
+        .mes-actual {
+            font-size: 1.5rem;
+            font-weight: 700;
+            min-width: 200px;
+            text-align: center;
+        }
+        
+        .calendario-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .dia-header {
+            text-align: center;
+            font-weight: 700;
+            padding: 1rem;
+            background: #f1f5f9;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .dia-celda {
+            min-height: 120px;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .dia-celda:hover {
+            border-color: #2563eb;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+        }
+        
+        .dia-celda.otro-mes {
+            background: #f8fafc;
+            opacity: 0.5;
+        }
+        
+        .dia-celda.hoy {
+            background: #dbeafe;
+            border: 2px solid #2563eb;
+        }
+        
+        .dia-numero {
+            font-weight: 700;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .reserva-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            margin-bottom: 0.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: pointer;
+        }
+        
+        .reserva-item:hover {
+            transform: scale(1.05);
+        }
+        
+        .reserva-item.check-in {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        
+        .reserva-item.check-out {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+        
+        .leyenda {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+        }
+        
+        .leyenda-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .leyenda-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 0.25rem;
+        }
+        
+        @media (max-width: 768px) {
+            .calendario-grid {
+                font-size: 0.75rem;
+            }
+            
+            .dia-celda {
+                min-height: 80px;
+                padding: 0.25rem;
+            }
+            
+            .dia-numero {
+                font-size: 0.75rem;
+            }
+            
+            .reserva-item {
+                font-size: 0.65rem;
+                padding: 0.15rem 0.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>🏢 Gestión</h2>
+                <div class="user-info">
+                    <div id="userName">Cargando...</div>
+                    <div id="userRole" style="font-size: 0.75rem;"></div>
+                </div>
+            </div>
+            <nav class="sidebar-menu" id="sidebarMenu"></nav>
+            <div class="sidebar-footer">
+                <button class="btn-logout" onclick="logout()">🚪 Cerrar Sesión</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1>📅 Calendario de Reservas</h1>
+                <p>Vista mensual de todas las reservas</p>
+            </div>
+
+            <!-- Filtros y Acciones -->
+            <div class="card">
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+                    <select 
+                        id="filterEdificio" 
+                        onchange="cargarReservasDelMes()"
+                        style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius); flex: 1; min-width: 200px;"
+                    >
+                        <option value="">Todos los edificios</option>
+                    </select>
+                    
+                    <select 
+                        id="filterDepartamento" 
+                        onchange="cargarReservasDelMes()"
+                        style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius); flex: 1; min-width: 200px;"
+                    >
+                        <option value="">Todos los departamentos</option>
+                    </select>
+
+                    <button class="btn btn-success" onclick="exportarMesActual()">
+                        📊 Exportar a Excel
+                    </button>
+                </div>
+            </div>
+
+            <!-- Calendario -->
+            <div class="calendario-container">
+                <div class="calendario-header">
+                    <div class="mes-navegacion">
+                        <button class="btn-mes" onclick="cambiarMes(-1)">←</button>
+                        <div class="mes-actual" id="mesActual">Cargando...</div>
+                        <button class="btn-mes" onclick="cambiarMes(1)">→</button>
+                        <button class="btn btn-primary" onclick="irHoy()">Hoy</button>
+                    </div>
+                </div>
+
+                <div class="calendario-grid" id="calendarioGrid">
+                    <!-- Se llena con JavaScript -->
+                </div>
+
+                <!-- Leyenda -->
+                <div class="leyenda">
+                    <div class="leyenda-item">
+                        <div class="leyenda-color" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+                        <span>Reserva activa</span>
+                    </div>
+                    <div class="leyenda-item">
+                        <div class="leyenda-color" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);"></div>
+                        <span>Check-in</span>
+                    </div>
+                    <div class="leyenda-item">
+                        <div class="leyenda-color" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);"></div>
+                        <span>Check-out</span>
+                    </div>
+                    <div class="leyenda-item">
+                        <div class="leyenda-color" style="background: #dbeafe; border: 2px solid #2563eb;"></div>
+                        <span>Hoy</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/menu.js"></script>
+    <script src="../js/notifications.js"></script>
+    <script src="../js/mobile-auto.js"></script>
+    <script>
+        let mesActual = new Date();
+        let reservasDelMes = [];
+        let edificiosData = [];
+        let departamentosData = [];
+
+        const diasSemana = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+        const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
+                       'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            await cargarEdificios();
+            await cargarDepartamentos();
+            renderCalendario();
+            cargarReservasDelMes();
+        });
+
+        async function cargarEdificios() {
+            try {
+                const data = await apiRequest('/edificios');
+                edificiosData = data.edificios || [];
+                
+                const select = document.getElementById('filterEdificio');
+                select.innerHTML = '<option value="">Todos los edificios</option>' +
+                    edificiosData.map(e => `<option value="${e.id}">${e.nombre}</option>`).join('');
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function cargarDepartamentos() {
+            try {
+                const data = await apiRequest('/departamentos');
+                departamentosData = data.departamentos || [];
+                
+                const select = document.getElementById('filterDepartamento');
+                select.innerHTML = '<option value="">Todos los departamentos</option>' +
+                    departamentosData.map(d => `<option value="${d.id}">${d.numero} - ${d.edificio.nombre}</option>`).join('');
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function cargarReservasDelMes() {
+            try {
+                const data = await apiRequest('/reservas');
+                let reservas = data.reservas || [];
+                
+                // Filtrar por edificio si está seleccionado
+                const edificioId = document.getElementById('filterEdificio').value;
+                if (edificioId) {
+                    reservas = reservas.filter(r => r.departamento.edificioId == edificioId);
+                }
+                
+                // Filtrar por departamento si está seleccionado
+                const departamentoId = document.getElementById('filterDepartamento').value;
+                if (departamentoId) {
+                    reservas = reservas.filter(r => r.departamentoId == departamentoId);
+                }
+                
+                // Filtrar por mes actual
+                reservasDelMes = reservas.filter(r => {
+                    const inicio = new Date(r.fechaInicio);
+                    const fin = new Date(r.fechaFin);
+                    const mesInicio = new Date(mesActual.getFullYear(), mesActual.getMonth(), 1);
+                    const mesFin = new Date(mesActual.getFullYear(), mesActual.getMonth() + 1, 0);
+                    
+                    return (inicio <= mesFin && fin >= mesInicio);
+                });
+                
+                renderCalendario();
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Error al cargar reservas');
+            }
+        }
+
+        function renderCalendario() {
+            const grid = document.getElementById('calendarioGrid');
+            document.getElementById('mesActual').textContent = 
+                `${meses[mesActual.getMonth()]} ${mesActual.getFullYear()}`;
+            
+            // Headers de días
+            let html = diasSemana.map(dia => 
+                `<div class="dia-header">${dia}</div>`
+            ).join('');
+            
+            // Obtener primer día del mes
+            const primerDia = new Date(mesActual.getFullYear(), mesActual.getMonth(), 1);
+            const ultimoDia = new Date(mesActual.getFullYear(), mesActual.getMonth() + 1, 0);
+            const diaInicio = primerDia.getDay();
+            
+            // Días del mes anterior
+            const mesAnterior = new Date(mesActual.getFullYear(), mesActual.getMonth(), 0);
+            for (let i = diaInicio - 1; i >= 0; i--) {
+                const dia = mesAnterior.getDate() - i;
+                html += `<div class="dia-celda otro-mes"><div class="dia-numero">${dia}</div></div>`;
+            }
+            
+            // Días del mes actual
+            const hoy = new Date();
+            for (let dia = 1; dia <= ultimoDia.getDate(); dia++) {
+                const fecha = new Date(mesActual.getFullYear(), mesActual.getMonth(), dia);
+                const esHoy = fecha.toDateString() === hoy.toDateString();
+                const reservasDelDia = obtenerReservasDelDia(fecha);
+                
+                html += `
+                    <div class="dia-celda ${esHoy ? 'hoy' : ''}" onclick="verDia('${fecha.toISOString()}')">
+                        <div class="dia-numero">${dia}</div>
+                        ${reservasDelDia.map(r => renderReservaItem(r, fecha)).join('')}
+                    </div>
+                `;
+            }
+            
+            // Completar con días del mes siguiente
+            const diasMostrados = diaInicio + ultimoDia.getDate();
+            const celdasRestantes = Math.ceil(diasMostrados / 7) * 7 - diasMostrados;
+            for (let i = 1; i <= celdasRestantes; i++) {
+                html += `<div class="dia-celda otro-mes"><div class="dia-numero">${i}</div></div>`;
+            }
+            
+            grid.innerHTML = html;
+        }
+
+        function obtenerReservasDelDia(fecha) {
+            return reservasDelMes.filter(r => {
+                const inicio = new Date(r.fechaInicio);
+                const fin = new Date(r.fechaFin);
+                inicio.setHours(0, 0, 0, 0);
+                fin.setHours(0, 0, 0, 0);
+                fecha.setHours(0, 0, 0, 0);
+                
+                return fecha >= inicio && fecha <= fin;
+            });
+        }
+
+        function renderReservaItem(reserva, fecha) {
+            const fechaInicio = new Date(reserva.fechaInicio);
+            const fechaFin = new Date(reserva.fechaFin);
+            fechaInicio.setHours(0, 0, 0, 0);
+            fechaFin.setHours(0, 0, 0, 0);
+            fecha.setHours(0, 0, 0, 0);
+            
+            let clase = 'reserva-item';
+            let icono = '📅';
+            
+            if (fecha.getTime() === fechaInicio.getTime()) {
+                clase += ' check-in';
+                icono = '✅';
+            } else if (fecha.getTime() === fechaFin.getTime()) {
+                clase += ' check-out';
+                icono = '🚪';
+            }
+            
+            return `
+                <div class="${clase}" onclick="event.stopPropagation(); verReserva(${reserva.id})" title="${reserva.cliente.nombre} - ${reserva.departamento.numero}">
+                    ${icono} ${reserva.departamento.numero}
+                </div>
+            `;
+        }
+
+        function cambiarMes(direccion) {
+            mesActual.setMonth(mesActual.getMonth() + direccion);
+            cargarReservasDelMes();
+        }
+
+        function irHoy() {
+            mesActual = new Date();
+            cargarReservasDelMes();
+        }
+
+        function verDia(fechaISO) {
+            const fecha = new Date(fechaISO);
+            const reservas = obtenerReservasDelDia(fecha);
+            
+            if (reservas.length === 0) {
+                showSuccess(`📅 ${fecha.toLocaleDateString('es-PY')}\n\nNo hay reservas este día`);
+                return;
+            }
+            
+            let mensaje = `📅 ${fecha.toLocaleDateString('es-PY', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            })}\n\n`;
+            
+            reservas.forEach(r => {
+                mensaje += `🏢 ${r.departamento.numero} - ${r.departamento.edificio.nombre}\n`;
+                mensaje += `👤 ${r.cliente.nombre}\n`;
+                mensaje += `💰 ₲${r.monto.toLocaleString('es-PY')}\n`;
+                mensaje += `📊 ${r.estado}\n\n`;
+            });
+            
+            showSuccess(mensaje);
+        }
+
+        function verReserva(id) {
+            const reserva = reservasDelMes.find(r => r.id === id);
+            if (!reserva) return;
+            
+            const mensaje = `
+🏢 RESERVA #${reserva.id}
+
+👤 Cliente: ${reserva.cliente.nombre}
+📞 Tel: ${reserva.cliente.telefono}
+
+🚪 Departamento: ${reserva.departamento.numero}
+🏢 Edificio: ${reserva.departamento.edificio.nombre}
+
+📅 Check-in: ${new Date(reserva.fechaInicio).toLocaleString('es-PY')}
+🚪 Check-out: ${new Date(reserva.fechaFin).toLocaleString('es-PY')}
+
+💰 Monto: ₲${reserva.monto.toLocaleString('es-PY')}
+💳 Pagado: ${reserva.pagado ? 'Sí' : 'No'}
+${reserva.metodoPago ? `Método: ${reserva.metodoPago}` : ''}
+
+📊 Estado: ${reserva.estado}
+            `.trim();
+            
+            alert(mensaje);
+        }
+
+        async function exportarMesActual() {
+            try {
+                // Obtener reservas del mes
+                const inicio = new Date(mesActual.getFullYear(), mesActual.getMonth(), 1);
+                const fin = new Date(mesActual.getFullYear(), mesActual.getMonth() + 1, 0);
+                
+                const reservasExportar = reservasDelMes.filter(r => r.estado !== 'cancelada');
+                
+                if (reservasExportar.length === 0) {
+                    showWarning('No hay reservas para exportar en este mes');
+                    return;
+                }
+                
+                // Crear CSV
+                let csv = 'ID,Cliente,Teléfono,Departamento,Edificio,Check-in,Check-out,Días,Monto,Pagado,Método Pago,Estado\n';
+                
+                reservasExportar.forEach(r => {
+                    const fechaInicio = new Date(r.fechaInicio);
+                    const fechaFin = new Date(r.fechaFin);
+                    const dias = Math.ceil((fechaFin - fechaInicio) / (1000 * 60 * 60 * 24));
+                    
+                    csv += `${r.id},"${r.cliente.nombre}","${r.cliente.telefono}","${r.departamento.numero}","${r.departamento.edificio.nombre}","${fechaInicio.toLocaleDateString('es-PY')}","${fechaFin.toLocaleDateString('es-PY')}",${dias},${r.monto},"${r.pagado ? 'Sí' : 'No'}","${r.metodoPago || 'N/A'}","${r.estado}"\n`;
+                });
+                
+                // Descargar archivo
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `reservas_${meses[mesActual.getMonth()]}_${mesActual.getFullYear()}.csv`;
+                link.click();
+                
+                showSuccess('✅ Excel exportado exitosamente');
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Error al exportar: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

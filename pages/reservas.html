@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservas - Gestión</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+    <script src="../js/mobile-auto.js"></script>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>🏢 Gestión</h2>
+                <div class="user-info">
+                    <div id="userName">Cargando...</div>
+                    <div id="userRole" style="font-size: 0.75rem;"></div>
+                </div>
+            </div>
+            <nav class="sidebar-menu" id="sidebarMenu"></nav>
+            <div class="sidebar-footer">
+                <button class="btn-logout" onclick="logout()">🚪 Cerrar Sesión</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1>📅 Reservas</h1>
+                <p>Gestión de reservas</p>
+            </div>
+
+            <!-- Filtros -->
+            <div class="card">
+                <button class="btn btn-success" onclick="window.location.href='nueva-reserva.html'">
+    ➕ Nueva Reserva
+</button>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <select 
+                        id="filterEstado" 
+                        style="padding: 0.5rem; border: 1px solid var(--border); border-radius: var(--radius); flex: 1;"
+                    >
+                        <option value="">Todos los estados</option>
+                        <option value="pendiente">Pendientes</option>
+                        <option value="confirmada">Confirmadas</option>
+                        <option value="completada">Completadas</option>
+                        <option value="cancelada">Canceladas</option>
+                    </select>
+
+                    <button class="btn btn-primary" onclick="cargarReservas()">
+                        🔄 Actualizar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Lista de reservas -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Lista de Reservas</h3>
+                    <span id="totalReservas">0 reservas</span>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Departamento</th>
+                                <th>Fecha Inicio</th>
+                                <th>Fecha Fin</th>
+                                <th>Monto</th>
+                                <th>Pago</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reservasTable">
+                            <tr>
+                                <td colspan="9" style="text-align: center; padding: 2rem;">
+                                    <div class="loading">
+                                        <div class="spinner"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/menu.js"></script>
+    <script src="../js/reservas.js"></script>
+    <script src="../js/notifications.js"></script>
+
+</body>
+</html>

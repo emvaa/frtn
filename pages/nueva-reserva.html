@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nueva Reserva - Gestión</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>🏢 Gestión</h2>
+                <div class="user-info">
+                    <div id="userName">Cargando...</div>
+                    <div id="userRole" style="font-size: 0.75rem;"></div>
+                </div>
+            </div>
+            <nav class="sidebar-menu" id="sidebarMenu"></nav>
+            <div class="sidebar-footer">
+                <button class="btn-logout" onclick="logout()">🚪 Cerrar Sesión</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1>📅 Nueva Reserva</h1>
+                <p>Crear una nueva reserva</p>
+            </div>
+
+            <div class="card" style="max-width: 800px;">
+                <form id="reservaForm">
+                    <!-- Cliente -->
+                    <div class="form-group">
+                        <label for="clienteId">Cliente *</label>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <select id="clienteId" required style="flex: 1; padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);">
+                                <option value="">Seleccione un cliente</option>
+                            </select>
+                            <button type="button" class="btn btn-secondary" onclick="buscarCliente()">🔍</button>
+                        </div>
+                    </div>
+
+                    <!-- Departamento -->
+                    <div class="form-group">
+                        <label for="departamentoId">Departamento *</label>
+                        <select id="departamentoId" required style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);">
+                            <option value="">Seleccione un departamento</option>
+                        </select>
+                        <small id="infoDepartamento" style="color: var(--text-secondary);"></small>
+                    </div>
+
+                    <!-- Fechas -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="fechaInicio">Fecha Inicio *</label>
+                            <input 
+                                type="datetime-local" 
+                                id="fechaInicio" 
+                                required 
+                                style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fechaFin">Fecha Fin *</label>
+                            <input 
+                                type="datetime-local" 
+                                id="fechaFin" 
+                                required 
+                                style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Monto -->
+                    <div class="form-group">
+                        <label for="monto">Monto (Gs) *</label>
+                        <input 
+                            type="number" 
+                            id="monto" 
+                            required 
+                            min="0"
+                            placeholder="Ej: 2500000"
+                            style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
+                        >
+                    </div>
+
+                    <!-- Método de pago -->
+                    <div class="form-group">
+                        <label for="metodoPago">Método de Pago</label>
+                        <select id="metodoPago" style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);">
+                            <option value="">Sin especificar</option>
+                            <option value="efectivo">Efectivo</option>
+                            <option value="transferencia">Transferencia</option>
+                            <option value="tarjeta">Tarjeta</option>
+                        </select>
+                    </div>
+
+                    <!-- Estado -->
+                    <div class="form-group">
+                        <label for="estado">Estado Inicial</label>
+                        <select id="estado" style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);">
+                            <option value="pendiente">Pendiente</option>
+                            <option value="confirmada">Confirmada</option>
+                        </select>
+                    </div>
+
+                    <!-- Botón verificar disponibilidad -->
+                    <button type="button" class="btn btn-info" onclick="verificarDisponibilidad()" style="width: 100%; margin-bottom: 1rem;">
+                        🔍 Verificar Disponibilidad
+                    </button>
+
+                    <div id="disponibilidadMsg" style="padding: 1rem; border-radius: var(--radius); margin-bottom: 1rem; display: none;"></div>
+
+                    <!-- Botones -->
+                    <div style="display: flex; gap: 1rem;">
+                        <button type="submit" class="btn btn-primary" style="flex: 1;">
+                            ✅ Crear Reserva
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="window.location.href='reservas.html'" style="flex: 1;">
+                            ❌ Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/menu.js"></script>
+    <script src="../js/notifications.js"></script>
+    <script src="../js/nueva-reserva.js"></script>
+    <script src="../js/mobile-auto.js"></script>
+</body>
+</html>

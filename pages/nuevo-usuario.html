@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Usuario - Gestión</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>🏢 Gestión</h2>
+                <div class="user-info">
+                    <div id="userName">Cargando...</div>
+                    <div id="userRole" style="font-size: 0.75rem;"></div>
+                </div>
+            </div>
+            <nav class="sidebar-menu" id="sidebarMenu"></nav>
+            <div class="sidebar-footer">
+                <button class="btn-logout" onclick="logout()">🚪 Cerrar Sesión</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1>👤 Nuevo Usuario</h1>
+                <p>Crear un nuevo usuario del sistema</p>
+            </div>
+
+            <div class="card" style="max-width: 600px;">
+                <form id="usuarioForm">
+                    <!-- Nombre -->
+                    <div class="form-group">
+                        <label for="nombre">Nombre Completo *</label>
+                        <input 
+                            type="text" 
+                            id="nombre" 
+                            required 
+                            placeholder="Ej: Juan Pérez"
+                            style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
+                        >
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            required 
+                            placeholder="usuario@example.com"
+                            style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
+                        >
+                        <small style="color: var(--text-secondary);">El email debe ser único en el sistema</small>
+                    </div>
+
+                    <!-- Contraseña -->
+                    <div class="form-group">
+                        <label for="password">Contraseña *</label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            required 
+                            minlength="6"
+                            placeholder="Mínimo 6 caracteres"
+                            style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
+                        >
+                    </div>
+
+                    <!-- Confirmar contraseña -->
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirmar Contraseña *</label>
+                        <input 
+                            type="password" 
+                            id="confirmPassword" 
+                            required 
+                            minlength="6"
+                            placeholder="Repita la contraseña"
+                            style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
+                        >
+                    </div>
+
+                    <!-- Rol -->
+                    <div class="form-group">
+                        <label for="rol">Rol del Usuario *</label>
+                        <select id="rol" required style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);">
+                            <option value="">Seleccione un rol</option>
+                            <option value="admin">Admin</option>
+                            <option value="recepcionista">Recepcionista</option>
+                            <option value="limpieza">Personal de Limpieza</option>
+                            <option value="contador">Contador</option>
+                            <option value="visor">Visor</option>
+                            <option value="super_admin">Super Admin</option>
+                        </select>
+                        <div id="rolDescription" style="margin-top: 0.5rem; padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius); font-size: 0.875rem; display: none;"></div>
+                    </div>
+
+                    <!-- Teléfono -->
+                    <div class="form-group">
+                        <label for="telefono">Teléfono</label>
+                        <input 
+                            type="tel" 
+                            id="telefono" 
+                            placeholder="Ej: 0981234567"
+                            style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
+                        >
+                    </div>
+
+                    <!-- Botones -->
+                    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                        <button type="submit" class="btn btn-primary" style="flex: 1;">
+                            ✅ Crear Usuario
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="window.location.href='usuarios.html'" style="flex: 1;">
+                            ❌ Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/menu.js"></script>
+    <script src="../js/notifications.js"></script>
+    <script src="../js/nuevo-usuario.js"></script>
+    <script src="../js/mobile-auto.js"></script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial - Limpieza</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>🧹 Limpieza</h2>
+                <div class="user-info">
+                    <div id="userName">Cargando...</div>
+                    <div id="userRole" style="font-size: 0.75rem;"></div>
+                </div>
+            </div>
+            <nav class="sidebar-menu" id="sidebarMenu"></nav>
+            <div class="sidebar-footer">
+                <button class="btn-logout" onclick="logout()">🚪 Cerrar Sesión</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1>📜 Historial de Tareas</h1>
+                <p>Tareas completadas</p>
+            </div>
+
+            <!-- Estadísticas del historial -->
+            <div class="stats-grid">
+                <div class="stat-card success">
+                    <div class="stat-label">Total Completadas</div>
+                    <div class="stat-value" id="statTotal">-</div>
+                </div>
+
+                <div class="stat-card info">
+                    <div class="stat-label">Tiempo Promedio</div>
+                    <div class="stat-value" id="statTiempo">-</div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="cargarHistorial()" style="margin-bottom: 1rem;">
+                🔄 Actualizar
+            </button>
+
+            <!-- Lista del historial -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Tareas Completadas</h3>
+                    <span id="totalTareas">0 tareas</span>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Departamento</th>
+                                <th>Fecha Asignación</th>
+                                <th>Fecha Completado</th>
+                                <th>Tiempo</th>
+                                <th>Prioridad</th>
+                                <th>Detalles</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historialTable">
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 2rem;">
+                                    <div class="loading">
+                                        <div class="spinner"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/menu.js"></script>
+    <script src="../js/historial-limpieza.js"></script>
+    <script src="../js/notifications.js"></script>
+    <script src="../js/mobile-auto.js"></script>
+</body>
+</html>

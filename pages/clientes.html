@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Cliente - Gestión</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>🏢 Gestión</h2>
+                <div class="user-info">
+                    <div id="userName">Cargando...</div>
+                    <div id="userRole" style="font-size: 0.75rem;"></div>
+                </div>
+            </div>
+            <nav class="sidebar-menu" id="sidebarMenu"></nav>
+            <div class="sidebar-footer">
+                <button class="btn-logout" onclick="logout()">🚪 Cerrar Sesión</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1>👤 Nuevo Cliente</h1>
+                <p>Registrar un nuevo cliente</p>
+            </div>
+
+            <div class="card" style="max-width: 700px;">
+                <form id="clienteForm">
+                    <div class="form-group">
+                        <label for="nombre">Nombre Completo *</label>
+                        <input 
+                            type="text" 
+                            id="nombre" 
+                            required 
+                            placeholder="Ej: María González"
+                            style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
+                        >
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="telefono">Teléfono *</label>
+                            <input 
+                                type="tel" 
+                                id="telefono" 
+                                required 
+                                placeholder="0981234567"
+                                style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="whatsapp">WhatsApp</label>
+                            <input 
+                                type="tel" 
+                                id="whatsapp" 
+                                placeholder="0981234567"
+                                style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
+                            >
+                            <small style="color: var(--text-secondary);">Si está vacío, se usará el teléfono</small>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                placeholder="cliente@example.com"
+                                style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cedula">Cédula (opcional)</label>
+                            <input 
+                                type="text" 
+                                id="cedula" 
+                                placeholder="1234567"
+                                style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
+                            >
+                            <small style="color: var(--text-secondary);">No es obligatoria</small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="direccion">Dirección</label>
+                        <input 
+                            type="text" 
+                            id="direccion" 
+                            placeholder="Ej: Av. Eusebio Ayala 1234"
+                            style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notas">Notas / Observaciones</label>
+                        <textarea 
+                            id="notas" 
+                            rows="3"
+                            placeholder="Cualquier información adicional..."
+                            style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius); width: 100%;"
+                        ></textarea>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                        <button type="submit" class="btn btn-primary" style="flex: 1;">
+                            ✅ Crear Cliente
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="window.location.href='clientes.html'" style="flex: 1;">
+                            ❌ Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/menu.js"></script>
+    <script src="../js/notifications.js"></script>
+    <script src="../js/nuevo-cliente.js"></script>
+    <script src="../js/mobile-auto.js"></script>
+</body>
+</html>

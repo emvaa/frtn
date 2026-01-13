@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Departamentos - Gestión</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>🏢 Gestión</h2>
+                <div class="user-info">
+                    <div id="userName">Cargando...</div>
+                    <div id="userRole" style="font-size: 0.75rem;"></div>
+                </div>
+            </div>
+            <nav class="sidebar-menu" id="sidebarMenu"></nav>
+            <div class="sidebar-footer">
+                <button class="btn-logout" onclick="logout()">🚪 Cerrar Sesión</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1>🚪 Departamentos</h1>
+                <p>Gestión de departamentos</p>
+            </div>
+
+            <!-- Filtros -->
+            <div class="card">
+                <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        placeholder="Buscar por número..." 
+                        style="padding: 0.5rem; border: 1px solid var(--border); border-radius: var(--radius); flex: 1; min-width: 200px;"
+                    >
+                    
+                    <!-- NUEVO: Filtro por edificio -->
+                    <select 
+                        id="filterEdificio" 
+                        style="padding: 0.5rem; border: 1px solid var(--border); border-radius: var(--radius);"
+                    >
+                        <option value="">Todos los edificios</option>
+                    </select>
+                    
+                    <select 
+                        id="filterEstado" 
+                        style="padding: 0.5rem; border: 1px solid var(--border); border-radius: var(--radius);"
+                    >
+                        <option value="">Todos los estados</option>
+                        <option value="disponible">Disponibles</option>
+                        <option value="reservado">Reservados</option>
+                        <option value="ocupado">Ocupados</option>
+                        <option value="mantenimiento">Mantenimiento</option>
+                    </select>
+
+                    <button class="btn btn-primary" onclick="cargarDepartamentos()">
+                        🔄 Actualizar
+                    </button>
+                </div>
+            </div>
+            
+            <button class="btn btn-success" onclick="window.location.href='nuevo-departamento.html'" style="margin-bottom: 1rem;">
+                ➕ Nuevo Departamento
+            </button>
+
+            <!-- Lista de departamentos -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Lista de Departamentos</h3>
+                    <span id="totalDepartamentos">0 departamentos</span>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Número</th>
+                                <th>Edificio</th>
+                                <th>Piso</th>
+                                <th>Habitaciones</th>
+                                <th>Baños</th>
+                                <th>Precio</th>
+                                <th>Estado</th>
+                                <th>Limpieza</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="departamentosTable">
+                            <tr>
+                                <td colspan="9" style="text-align: center; padding: 2rem;">
+                                    <div class="loading">
+                                        <div class="spinner"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/menu.js"></script>
+    <script src="../js/departamentos.js"></script>
+    <script src="../js/notifications.js"></script>
+    <script src="../js/mobile-auto.js"></script>
+</body>
+</html>

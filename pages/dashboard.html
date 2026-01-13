@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Gestión</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>🏢 Gestión</h2>
+                <div class="user-info">
+                    <div id="userName">Cargando...</div>
+                    <div id="userRole" style="font-size: 0.75rem;"></div>
+                </div>
+            </div>
+
+            <nav class="sidebar-menu" id="sidebarMenu">
+                <!-- Se llena dinámicamente según el rol -->
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn-logout" onclick="logout()">
+                    🚪 Cerrar Sesión
+                </button>
+            </div>
+        </aside>
+
+        <!-- Contenido principal -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1>Dashboard</h1>
+                <p>Vista general del sistema</p>
+            </div>
+
+            <!-- Estadísticas -->
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card success">
+                    <div class="stat-label">Disponibles</div>
+                    <div class="stat-value" id="statDisponibles">-</div>
+                </div>
+
+                <div class="stat-card warning">
+                    <div class="stat-label">Reservados</div>
+                    <div class="stat-value" id="statReservados">-</div>
+                </div>
+
+                <div class="stat-card danger">
+                    <div class="stat-label">Ocupados</div>
+                    <div class="stat-value" id="statOcupados">-</div>
+                </div>
+
+                <div class="stat-card info" id="statIngresosCard" style="display: none;">
+                    <div class="stat-label">Ingresos del Mes</div>
+                    <div class="stat-value" id="statIngresos">-</div>
+                </div>
+            </div>
+
+            <!-- Alertas -->
+            <div class="card" id="alertasCard">
+                <div class="card-header">
+                    <h3 class="card-title">⚠️ Alertas</h3>
+                </div>
+                <div id="alertasList">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actividad reciente -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">📊 Actividad Reciente</h3>
+                </div>
+                <div id="actividadList">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/menu.js"></script>
+    <script src="../js/notifications.js"></script>
+    <script src="../js/dashboard.js"></script>
+    <script src="../js/mobile-auto.js"></script>
+</body>
+</html>
