@@ -520,13 +520,18 @@ table tbody tr:hover {
 @media (max-width: 768px) {
     /* Layout */
     .sidebar {
-        display: none;
+        display: none !important;
+    }
+    
+    .app-container {
+        flex-direction: column;
     }
     
     .main-content {
-        margin-left: 0;
-        padding: 1rem;
-        padding-top: 1rem;
+        margin-left: 0 !important;
+        padding: 1rem !important;
+        padding-top: 1rem !important;
+        width: 100% !important;
     }
 
     /* Login móvil */
@@ -610,15 +615,32 @@ table tbody tr:hover {
     }
 
     /* Asegurar que los selects en filtros sean full width */
-    .card select:not([style*="width"]),
-    .card input[type="text"]:not([style*="width"]),
-    .card input[type="search"]:not([style*="width"]) {
-        width: 100%;
-        margin-bottom: 0.5rem;
+    .card select,
+    .card input[type="text"],
+    .card input[type="search"],
+    .card input[type="tel"],
+    .card input[type="email"] {
+        width: 100% !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    /* Grids de formularios - forzar 1 columna */
+    form div[style*="grid-template-columns"],
+    .form-group div[style*="grid-template-columns"],
+    div[style*="grid-template-columns: 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+
+    /* Contenedores flex en cards - apilar verticalmente */
+    .card > div[style*="display: flex"] {
+        flex-direction: column !important;
+        gap: 0.75rem !important;
     }
 
     /* Grid de edificios responsive */
-    div[style*="grid-template-columns: repeat(auto-fill"] {
+    div[style*="grid-template-columns: repeat(auto-fill"],
+    div[style*="grid-template-columns: repeat(auto-fit"] {
         grid-template-columns: 1fr !important;
     }
 
