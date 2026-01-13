@@ -208,14 +208,74 @@
 
                 /* Stats grid responsive */
                 .stats-grid {
-                    grid-template-columns: repeat(2, 1fr);
+                    grid-template-columns: 1fr !important;
                     gap: 0.75rem;
                 }
 
-                /* Botones móviles */
-                .btn {
-                    width: 100%;
-                    margin-bottom: 0.5rem;
+                /* Ocultar sidebar completamente */
+                .sidebar {
+                    display: none !important;
+                }
+
+                /* Ajustar main content */
+                .main-content {
+                    margin-left: 0 !important;
+                    padding: 1rem !important;
+                    padding-top: calc(var(--mobile-header-height) + 1rem) !important;
+                    padding-bottom: calc(var(--mobile-bottom-nav-height) + 1rem) !important;
+                }
+
+                /* Formularios - convertir grids a 1 columna */
+                form div[style*="grid-template-columns"],
+                .form-group div[style*="grid-template-columns"],
+                div[style*="grid-template-columns: 1fr 1fr"] {
+                    grid-template-columns: 1fr !important;
+                    gap: 1rem !important;
+                }
+
+                /* Contenedores flex en cards - apilar verticalmente */
+                .card > div[style*="display: flex"]:not(:last-child) {
+                    flex-direction: column !important;
+                    gap: 0.75rem !important;
+                }
+
+                /* Botones móviles - full width excepto pequeños */
+                .btn:not(.btn-sm) {
+                    width: 100% !important;
+                    margin-bottom: 0.5rem !important;
+                }
+
+                .btn-sm {
+                    width: auto;
+                    margin-bottom: 0;
+                }
+
+                /* Botones en formularios finales - mantener juntos */
+                form > div[style*="display: flex"]:last-child {
+                    flex-direction: column !important;
+                    gap: 0.75rem !important;
+                }
+
+                form > div[style*="display: flex"]:last-child > button,
+                form > div[style*="display: flex"]:last-child > .btn {
+                    width: 100% !important;
+                    margin-bottom: 0 !important;
+                }
+
+                /* Selects e inputs en filtros - full width */
+                .card select,
+                .card input[type="text"],
+                .card input[type="search"],
+                .card input[type="tel"],
+                .card input[type="email"] {
+                    width: 100% !important;
+                    margin-bottom: 0.5rem !important;
+                }
+
+                /* Grid de edificios - 1 columna */
+                div[style*="grid-template-columns: repeat(auto-fill"],
+                div[style*="grid-template-columns: repeat(auto-fit"] {
+                    grid-template-columns: 1fr !important;
                 }
 
                 /* Login móvil */
@@ -230,15 +290,52 @@
                 /* Tablas */
                 .table-container {
                     overflow-x: auto;
+                    -webkit-overflow-scrolling: touch;
                 }
 
                 table {
-                    font-size: 0.875rem;
+                    font-size: 0.8125rem;
+                    min-width: 600px;
                 }
 
                 table th, table td {
                     padding: 0.5rem;
                     white-space: nowrap;
+                }
+
+                /* Cards */
+                .card {
+                    padding: 1rem !important;
+                    margin-bottom: 1rem;
+                }
+
+                .card-header {
+                    flex-direction: column !important;
+                    align-items: flex-start !important;
+                    gap: 0.75rem !important;
+                }
+
+                /* Page header */
+                .page-header {
+                    margin-bottom: 1.5rem;
+                }
+
+                .page-header h1 {
+                    font-size: 1.5rem;
+                }
+
+                /* Formularios inputs */
+                .form-group input,
+                .form-group select,
+                .form-group textarea {
+                    font-size: 16px !important;
+                    padding: 0.875rem !important;
+                    width: 100% !important;
+                }
+
+                /* Asegurar que elementos inline con display flex se apilen */
+                div[style*="display: flex"][style*="gap"] {
+                    flex-wrap: wrap;
                 }
             }
         `;
@@ -253,10 +350,86 @@
     function createMobileComponents() {
         if (!isAuthenticated()) return;
 
+        // Aplicar clases móviles a elementos existentes
+        applyMobileClasses();
+        
         createMobileHeader();
         createMobileDrawer();
         createMobileBottomNav();
         setupMobileEvents();
+    }
+
+    // ============================================
+    // APLICAR CLASES Y ESTILOS MÓVILES
+    // ============================================
+    function applyMobileClasses() {
+        // Ocultar sidebar
+        const sidebar = document.querySelector('.sidebar');
+        if (sidebar) {
+            sidebar.style.display = 'none';
+        }
+
+        // Ajustar main-content
+        const mainContent = document.querySelector('.main-content');
+        if (mainContent) {
+            mainContent.style.marginLeft = '0';
+            mainContent.style.padding = '1rem';
+        }
+
+        // Convertir grids de formularios a 1 columna
+        document.querySelectorAll('div[style*="grid-template-columns"]').forEach(el => {
+            const style = el.getAttribute('style') || '';
+            if (style.includes('grid-template-columns')) {
+                // Verificar si tiene grid-template-columns con múltiples columnas
+                if (style.includes('1fr 1fr') || style.includes('repeat')) {
+                    el.style.gridTemplateColumns = '1fr';
+                    el.style.gap = '1rem';
+                }
+            }
+        });
+
+        // Convertir contenedores flex en cards a columna (excepto últimos hijos que son botones)
+        document.querySelectorAll('.card > div[style*="display: flex"]').forEach(el => {
+            const isLastChild = el === el.parentElement.lastElementChild;
+            const isFormButtons = el.querySelector('button[type="submit"]') || el.querySelector('button[type="button"]');
+            
+            if (!isLastChild || !isFormButtons) {
+                el.style.flexDirection = 'column';
+                el.style.gap = '0.75rem';
+            }
+        });
+
+        // Asegurar que selects e inputs en cards sean full width
+        document.querySelectorAll('.card select, .card input[type="text"], .card input[type="search"], .card input[type="tel"], .card input[type="email"]').forEach(el => {
+            const currentWidth = el.style.width;
+            if (!currentWidth || currentWidth === 'auto' || currentWidth === '') {
+                el.style.width = '100%';
+                el.style.marginBottom = '0.5rem';
+            }
+        });
+
+        // Botones full width excepto btn-sm y botones en headers
+        document.querySelectorAll('.btn:not(.btn-sm)').forEach(btn => {
+            const parent = btn.parentElement;
+            const isInCardHeader = parent && parent.classList.contains('card-header');
+            const isInFormLastRow = parent && parent.parentElement && 
+                                   parent.parentElement.tagName === 'FORM' &&
+                                   parent === Array.from(parent.parentElement.children).pop();
+            
+            if (!isInCardHeader) {
+                btn.style.width = '100%';
+                if (isInFormLastRow) {
+                    btn.style.marginBottom = '0';
+                } else {
+                    btn.style.marginBottom = '0.5rem';
+                }
+            }
+        });
+
+        // Grid de edificios - convertir a 1 columna
+        document.querySelectorAll('div[style*="grid-template-columns: repeat"]').forEach(el => {
+            el.style.gridTemplateColumns = '1fr';
+        });
     }
 
     function createMobileHeader() {
@@ -536,36 +709,68 @@
         console.log('🔍 Detectando dispositivo...');
         
         const isMobile = isMobileDevice();
+        const isSmallScreen = window.innerWidth <= 768;
+        
         console.log(`📱 Es móvil: ${isMobile}`);
         console.log(`📐 Ancho de pantalla: ${window.innerWidth}px`);
         console.log(`👆 Touch: ${('ontouchstart' in window)}`);
         
-        if (isMobile || window.innerWidth <= 768) {
+        // Activar modo móvil si es dispositivo móvil O si la pantalla es pequeña
+        if (isMobile || isSmallScreen) {
             console.log('✅ Activando modo móvil...');
             
-            // Opción 1: Inyectar estilos inline (Recomendado - No requiere archivo externo)
+            // Inyectar estilos inline
             injectMobileStyles();
             
-            // Opción 2: Cargar archivo CSS (Descomentar si prefieres usar archivo externo)
-            // loadMobileStyles();
+            // Función para activar componentes móviles
+            function activateMobile() {
+                // Aplicar estilos inmediatamente
+                applyMobileClasses();
+                
+                // Crear componentes móviles si está autenticado
+                if (isAuthenticated()) {
+                    createMobileHeader();
+                    createMobileDrawer();
+                    createMobileBottomNav();
+                    setupMobileEvents();
+                }
+            }
             
             // Esperar a que el DOM esté listo
             if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', createMobileComponents);
+                document.addEventListener('DOMContentLoaded', activateMobile);
             } else {
-                createMobileComponents();
+                // Si el DOM ya está listo, ejecutar inmediatamente
+                setTimeout(activateMobile, 100);
             }
             
-            // Manejar cambios de orientación
+            // Manejar cambios de orientación y resize
+            let resizeTimeout;
             window.addEventListener('resize', function() {
-                const header = document.querySelector('.mobile-header');
-                if (window.innerWidth > 768 && header) {
-                    // Cambió a desktop, remover componentes móviles
-                    document.querySelectorAll('.mobile-header, .mobile-drawer, .mobile-drawer-overlay, .mobile-bottom-nav').forEach(el => el.remove());
-                } else if (window.innerWidth <= 768 && !header) {
-                    // Cambió a móvil, crear componentes
-                    createMobileComponents();
-                }
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(function() {
+                    const currentWidth = window.innerWidth;
+                    const header = document.querySelector('.mobile-header');
+                    
+                    if (currentWidth > 768 && header) {
+                        // Cambió a desktop, remover componentes móviles
+                        document.querySelectorAll('.mobile-header, .mobile-drawer, .mobile-drawer-overlay, .mobile-bottom-nav').forEach(el => el.remove());
+                        // Restaurar sidebar
+                        const sidebar = document.querySelector('.sidebar');
+                        if (sidebar) sidebar.style.display = '';
+                        const mainContent = document.querySelector('.main-content');
+                        if (mainContent) mainContent.style.marginLeft = '';
+                    } else if (currentWidth <= 768) {
+                        // Cambió a móvil, aplicar estilos y crear componentes
+                        applyMobileClasses();
+                        if (isAuthenticated() && !header) {
+                            createMobileHeader();
+                            createMobileDrawer();
+                            createMobileBottomNav();
+                            setupMobileEvents();
+                        }
+                    }
+                }, 250);
             });
         }
     }
