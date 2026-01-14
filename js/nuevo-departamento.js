@@ -1,4 +1,5 @@
 let edificiosData = [];
+let usdToPygRate = 7300; // fallback
 
 document.addEventListener('DOMContentLoaded', async function() {
     // Verificar permisos
@@ -8,10 +9,38 @@ document.addEventListener('DOMContentLoaded', async function() {
         setTimeout(() => window.location.href = 'departamentos.html', 2000);
         return;
     }
-    
+    await cargarTipoCambio();
     await cargarEdificios();
+    document.getElementById('precioUsd').addEventListener('input', actualizarPrecioGs);
     document.getElementById('departamentoForm').addEventListener('submit', crearDepartamento);
 });
+
+async function cargarTipoCambio() {
+    const tcInfo = document.getElementById('tcInfo');
+    try {
+        // API gratuita de tipo de cambio (sin API key)
+        const res = await fetch('https://open.er-api.com/v6/latest/USD');
+        const data = await res.json();
+        if (data && data.rates && data.rates.PYG) {
+            usdToPygRate = data.rates.PYG;
+            tcInfo.textContent = `1 USD ≈ ₲${Math.round(usdToPygRate).toLocaleString('es-PY')}`;
+            actualizarPrecioGs();
+            return;
+        }
+        throw new Error('Sin tasa PYG');
+    } catch (error) {
+        tcInfo.textContent = 'No se pudo actualizar TC, usando valor por defecto (₲7.300)';
+        usdToPygRate = 7300;
+        actualizarPrecioGs();
+    }
+}
+
+function actualizarPrecioGs() {
+    const usd = parseFloat(document.getElementById('precioUsd').value || '0');
+    const gs = Math.round(usd * usdToPygRate);
+    document.getElementById('precio').value = gs > 0 ? gs : '';
+    document.getElementById('precioGsPreview').textContent = `₲${gs.toLocaleString('es-PY')}`;
+}
 
 async function cargarEdificios() {
     try {
