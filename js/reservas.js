@@ -96,7 +96,8 @@ function getEstadoLabel(estado) {
 
 function getAcciones(reserva) {
     const user = getUser();
-    let acciones = `<button class="btn btn-sm btn-primary" onclick="verDetalle(${reserva.id})">👁️ Ver</button>`;
+    let acciones = `<button class="btn btn-sm btn-primary" onclick="verEnCalendario(${reserva.id})">👁️ Ver</button>`;
+    acciones += ` <button class="btn btn-sm btn-secondary" onclick="verDetalle(${reserva.id})">ℹ️ Detalle</button>`;
     
     // Solo mostrar acciones si NO está cancelada o completada
     if (reserva.estado === 'pendiente' || reserva.estado === 'confirmada') {
@@ -119,6 +120,10 @@ function getAcciones(reserva) {
     }
     
     return acciones;
+}
+
+function verEnCalendario(id) {
+    window.location.href = `calendario.html?reservaId=${encodeURIComponent(id)}`;
 }
 
 // NUEVA FUNCIÓN: Confirmar pago
