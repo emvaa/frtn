@@ -2,10 +2,12 @@ let clientesData = [];
 let departamentosData = [];
 let edificiosData = [];
 let departamentosPorEdificio = [];
+let usdToPygRate = 7300; // fallback
 
 document.addEventListener('DOMContentLoaded', async function() {
     await cargarClientes();
     await cargarEdificios();
+    await cargarTipoCambio();
     
     // Event listeners
     document.getElementById('edificioId').addEventListener('change', onEdificioChange);
@@ -50,6 +52,23 @@ async function cargarEdificios() {
     }
 }
 
+async function cargarTipoCambio() {
+    const montoUsdPreview = document.getElementById('montoUsdPreview');
+    try {
+        const res = await fetch('https://open.er-api.com/v6/latest/USD');
+        const data = await res.json();
+        if (data && data.rates && data.rates.PYG) {
+            usdToPygRate = data.rates.PYG;
+            montoUsdPreview.textContent = `TC: 1 USD ≈ ₲${Math.round(usdToPygRate).toLocaleString('es-PY')}`;
+            return;
+        }
+        throw new Error('Sin tasa PYG');
+    } catch (error) {
+        usdToPygRate = 7300;
+        montoUsdPreview.textContent = 'TC no disponible, usando ₲7.300 como referencia';
+    }
+}
+
 async function onEdificioChange() {
     const edificioId = document.getElementById('edificioId').value;
     const selectDepto = document.getElementById('departamentoId');
@@ -77,11 +96,15 @@ async function onEdificioChange() {
         }
 
         selectDepto.innerHTML = '<option value="">Seleccione un departamento</option>' +
-            departamentosPorEdificio.map(d => `
+            departamentosPorEdificio.map(d => {
+                const usd = usdToPygRate ? (d.precio / usdToPygRate) : null;
+                const usdLabel = usd ? ` / $${usd.toFixed(2)}` : '';
+                return `
                 <option value="${d.id}">
-                    ${d.numero} (₲${d.precio.toLocaleString('es-PY')}/día)
+                    ${d.numero} (₲${d.precio.toLocaleString('es-PY')}/día${usdLabel})
                 </option>
-            `).join('');
+            `;
+            }).join('');
     } catch (error) {
         console.error('Error:', error);
         showError('Error al cargar departamentos');
@@ -99,7 +122,9 @@ function mostrarInfoDepartamento() {
     
     const depto = (departamentosPorEdificio.length ? departamentosPorEdificio : departamentosData).find(d => d.id == deptoId);
     if (depto) {
-        infoDiv.textContent = `${depto.habitaciones} hab, ${depto.banos} baños - Precio: ₲${depto.precio.toLocaleString('es-PY')}/día`;
+        const usd = usdToPygRate ? (depto.precio / usdToPygRate) : null;
+        const usdLabel = usd ? ` / $${usd.toFixed(2)}` : '';
+        infoDiv.textContent = `${depto.habitaciones} hab, ${depto.banos} baños - Precio: ₲${depto.precio.toLocaleString('es-PY')}/día${usdLabel}`;
         
         // Calcular monto si hay fechas seleccionadas
         calcularMonto();
@@ -128,10 +153,18 @@ function calcularMonto() {
         
         // Actualizar info con cálculo
         const infoDiv = document.getElementById('infoDepartamento');
+        const usdTotal = usdToPygRate ? (montoTotal / usdToPygRate) : null;
+        const usdUnit = usdToPygRate ? (depto.precio / usdToPygRate) : null;
         infoDiv.innerHTML = `
             ${depto.habitaciones} hab, ${depto.banos} baños<br>
-            <strong>Precio: ₲${depto.precio.toLocaleString('es-PY')}/día × ${dias} día${dias !== 1 ? 's' : ''} = ₲${montoTotal.toLocaleString('es-PY')}</strong>
+            <strong>Precio: ₲${depto.precio.toLocaleString('es-PY')}/día${usdUnit ? ` / $${usdUnit.toFixed(2)}` : ''} × ${dias} día${dias !== 1 ? 's' : ''} = ₲${montoTotal.toLocaleString('es-PY')}${usdTotal ? ` / $${usdTotal.toFixed(2)}` : ''}</strong>
         `;
+
+        // Mostrar vista previa en USD en el campo de monto
+        const montoUsdPreview = document.getElementById('montoUsdPreview');
+        if (montoUsdPreview) {
+            montoUsdPreview.textContent = usdTotal ? `≈ $${usdTotal.toFixed(2)} al tipo de cambio actual` : '';
+        }
     }
 }
 
