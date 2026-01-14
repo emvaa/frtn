@@ -83,15 +83,13 @@ async function onEdificioChange() {
     }
 
     try {
-        // Traer departamentos disponibles y filtrar por edificio en frontend
-        // Nota: este endpoint NO filtra por "requiereLimpieza", así que permite reservar aunque esté sucio.
-        const data = await apiRequest('/departamentos/disponibles');
-        departamentosData = data.departamentos || [];
-        departamentosPorEdificio = departamentosData.filter(d => String(d.edificioId) === String(edificioId));
+        // Traer TODOS los departamentos del edificio (incluyendo ocupados/reservados/sucios)
+        const data = await apiRequest(`/departamentos/edificio/${edificioId}`);
+        departamentosPorEdificio = data.departamentos || [];
 
         selectDepto.disabled = false;
         if (departamentosPorEdificio.length === 0) {
-            selectDepto.innerHTML = '<option value="">No hay departamentos disponibles en este edificio</option>';
+            selectDepto.innerHTML = '<option value="">No hay departamentos en este edificio</option>';
             return;
         }
 
@@ -99,9 +97,16 @@ async function onEdificioChange() {
             departamentosPorEdificio.map(d => {
                 const usd = usdToPygRate ? (d.precio / usdToPygRate) : null;
                 const usdLabel = usd ? ` / $${usd.toFixed(2)}` : '';
+                // Mostrar estado si no está disponible
+                let estadoLabel = '';
+                if (d.estado === 'ocupado') estadoLabel = ' [OCUPADO]';
+                else if (d.estado === 'reservado') estadoLabel = ' [RESERVADO]';
+                else if (d.estado === 'mantenimiento') estadoLabel = ' [MANTENIMIENTO]';
+                if (d.requiereLimpieza) estadoLabel += ' [SUCIO]';
+                
                 return `
                 <option value="${d.id}">
-                    ${d.numero} (₲${d.precio.toLocaleString('es-PY')}/día${usdLabel})
+                    ${d.numero}${estadoLabel} (₲${d.precio.toLocaleString('es-PY')}/día${usdLabel})
                 </option>
             `;
             }).join('');
@@ -120,11 +125,26 @@ function mostrarInfoDepartamento() {
         return;
     }
     
-    const depto = (departamentosPorEdificio.length ? departamentosPorEdificio : departamentosData).find(d => d.id == deptoId);
+    const depto = departamentosPorEdificio.find(d => d.id == deptoId);
     if (depto) {
         const usd = usdToPygRate ? (depto.precio / usdToPygRate) : null;
         const usdLabel = usd ? ` / $${usd.toFixed(2)}` : '';
-        infoDiv.textContent = `${depto.habitaciones} hab, ${depto.banos} baños - Precio: ₲${depto.precio.toLocaleString('es-PY')}/día${usdLabel}`;
+        
+        // Mostrar advertencias si está ocupado o sucio
+        let advertencias = [];
+        if (depto.estado === 'ocupado') {
+            advertencias.push('<span style="color: #dc2626; font-weight: bold;">⚠️ Este departamento está OCUPADO</span>');
+        }
+        if (depto.requiereLimpieza) {
+            advertencias.push('<span style="color: #f59e0b; font-weight: bold;">🧹 Este departamento requiere LIMPIEZA</span>');
+        }
+        
+        let infoHTML = `${depto.habitaciones} hab, ${depto.banos} baños - Precio: ₲${depto.precio.toLocaleString('es-PY')}/día${usdLabel}`;
+        if (advertencias.length > 0) {
+            infoHTML += '<br><br>' + advertencias.join('<br>');
+        }
+        
+        infoDiv.innerHTML = infoHTML;
         
         // Calcular monto si hay fechas seleccionadas
         calcularMonto();
@@ -236,6 +256,44 @@ async function crearReserva(e) {
     if (formData.monto <= 0) {
         showError('El monto debe ser mayor a 0');
         return;
+    }
+    
+    // Verificar estado del departamento y mostrar alerta si está ocupado o sucio
+    const depto = departamentosPorEdificio.find(d => d.id == formData.departamentoId);
+    if (depto) {
+        let advertencias = [];
+        if (depto.estado === 'ocupado') {
+            advertencias.push('Este departamento está OCUPADO');
+        }
+        if (depto.requiereLimpieza) {
+            advertencias.push('Este departamento requiere LIMPIEZA');
+        }
+        
+        if (advertencias.length > 0) {
+            const mensaje = `⚠️ ADVERTENCIA:\n\n${advertencias.join('\n')}\n\n¿Desea hacer la reserva de igual forma?`;
+            if (!confirm(mensaje)) {
+                return;
+            }
+        }
+    }
+    
+    // Verificar conflictos de disponibilidad
+    try {
+        const disponibilidad = await apiRequest(
+            `/reservas/disponibilidad?departamentoId=${formData.departamentoId}&fechaInicio=${formData.fechaInicio}&fechaFin=${formData.fechaFin}`
+        );
+        
+        if (!disponibilidad.disponible && disponibilidad.conflictos && disponibilidad.conflictos.length > 0) {
+            const mensaje = `⚠️ ADVERTENCIA:\n\nEl departamento tiene ${disponibilidad.conflictos.length} reserva(s) conflictiva(s) en esas fechas.\n\n¿Desea crear la reserva de igual forma?`;
+            if (!confirm(mensaje)) {
+                return;
+            }
+            // Agregar flag para forzar creación
+            formData.forzar = true;
+        }
+    } catch (error) {
+        console.error('Error verificando disponibilidad:', error);
+        // Continuar de todas formas
     }
     
     try {
