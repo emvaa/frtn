@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#2563eb">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Nueva Reserva - Gestión</title>
+    <title>Nuevo Departamento - Gestión</title>
     <link rel="stylesheet" href="../css/styles.css">
 </head>
 <body>
@@ -26,24 +26,12 @@
 
         <main class="main-content">
             <div class="page-header">
-                <h1>📅 Nueva Reserva</h1>
-                <p>Crear una nueva reserva</p>
+                <h1>🚪 Nuevo Departamento</h1>
+                <p>Registrar un nuevo departamento</p>
             </div>
 
-            <div class="card" style="max-width: 800px;">
-                <form id="reservaForm">
-                    <!-- Cliente -->
-                    <div class="form-group">
-                        <label for="clienteId">Cliente *</label>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <select id="clienteId" required style="flex: 1; padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);">
-                                <option value="">Seleccione un cliente</option>
-                            </select>
-                            <button type="button" class="btn btn-secondary" onclick="buscarCliente()">🔍</button>
-                        </div>
-                    </div>
-
-                    <!-- Edificio -->
+            <div class="card" style="max-width: 700px;">
+                <form id="departamentoForm">
                     <div class="form-group">
                         <label for="edificioId">Edificio *</label>
                         <select id="edificioId" required style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);">
@@ -51,84 +39,93 @@
                         </select>
                     </div>
 
-                    <!-- Departamento -->
-                    <div class="form-group">
-                        <label for="departamentoId">Departamento *</label>
-                        <select id="departamentoId" required style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);">
-                            <option value="">Seleccione un departamento</option>
-                        </select>
-                        <small id="infoDepartamento" style="color: var(--text-secondary);"></small>
-                    </div>
-
-                    <!-- Fechas -->
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                         <div class="form-group">
-                            <label for="fechaInicio">Fecha Inicio *</label>
+                            <label for="numero">Nombre *</label>
                             <input 
-                                type="datetime-local" 
-                                id="fechaInicio" 
+                                type="text" 
+                                id="numero" 
                                 required 
+                                placeholder="Ej: 101, A-3, LoftB"
                                 style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
                             >
                         </div>
 
                         <div class="form-group">
-                            <label for="fechaFin">Fecha Fin *</label>
+                            <label for="piso">Piso *</label>
                             <input 
-                                type="datetime-local" 
-                                id="fechaFin" 
+                                type="number" 
+                                id="piso" 
                                 required 
+                                min="1"
+                                placeholder="1"
                                 style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
                             >
                         </div>
                     </div>
 
-                    <!-- Monto -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="habitaciones">Habitaciones *</label>
+                            <input 
+                                type="number" 
+                                id="habitaciones" 
+                                required 
+                                min="1"
+                                placeholder="2"
+                                style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="banos">Baños *</label>
+                            <input 
+                                type="number" 
+                                id="banos" 
+                                required 
+                                min="1"
+                                placeholder="1"
+                                style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
+                            >
+                        </div>
+                    </div>
+
                     <div class="form-group">
-                        <label for="monto">Monto (Gs) *</label>
+                        <label for="precioUsd">Precio por Día (USD) *</label>
                         <input 
                             type="number" 
-                            id="monto" 
+                            id="precioUsd" 
                             required 
                             min="0"
-                            placeholder="Ej: 2500000"
+                            step="0.01"
+                            placeholder="Ej: 50"
                             style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);"
                         >
+                        <div style="margin-top: 0.5rem; color: var(--text-secondary); display: flex; gap: 0.5rem; align-items: center;">
+                            <span>≈</span>
+                            <strong id="precioGsPreview">₲0</strong>
+                            <small id="tcInfo" style="color: var(--text-secondary);">Cargando tipo de cambio...</small>
+                        </div>
+                        <!-- Campo oculto para enviar en Guaraníes al backend -->
+                        <input type="hidden" id="precio" required>
+                        <small style="color: var(--text-secondary);">💡 Ingresá en USD. Convertimos automáticamente a Guaraníes al guardar.</small>
                     </div>
 
-                    <!-- Método de pago -->
                     <div class="form-group">
-                        <label for="metodoPago">Método de Pago</label>
-                        <select id="metodoPago" style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);">
-                            <option value="">Sin especificar</option>
-                            <option value="efectivo">Efectivo</option>
-                            <option value="transferencia">Transferencia</option>
-                            <option value="tarjeta">Tarjeta</option>
-                        </select>
+                        <label for="descripcion">Descripción</label>
+                        <textarea 
+                            id="descripcion" 
+                            rows="3"
+                            placeholder="Descripción adicional del departamento..."
+                            style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius); width: 100%;"
+                        ></textarea>
                     </div>
 
-                    <!-- Estado -->
-                    <div class="form-group">
-                        <label for="estado">Estado Inicial</label>
-                        <select id="estado" style="padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius);">
-                            <option value="pendiente">Pendiente</option>
-                            <option value="confirmada">Confirmada</option>
-                        </select>
-                    </div>
-
-                    <!-- Botón verificar disponibilidad -->
-                    <button type="button" class="btn btn-info" onclick="verificarDisponibilidad()" style="width: 100%; margin-bottom: 1rem;">
-                        🔍 Verificar Disponibilidad
-                    </button>
-
-                    <div id="disponibilidadMsg" style="padding: 1rem; border-radius: var(--radius); margin-bottom: 1rem; display: none;"></div>
-
-                    <!-- Botones -->
-                    <div style="display: flex; gap: 1rem;">
+                    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
                         <button type="submit" class="btn btn-primary" style="flex: 1;">
-                            ✅ Crear Reserva
+                            ✅ Crear Departamento
                         </button>
-                        <button type="button" class="btn btn-secondary" onclick="window.location.href='reservas.html'" style="flex: 1;">
+                        <button type="button" class="btn btn-secondary" onclick="window.location.href='departamentos.html'" style="flex: 1;">
                             ❌ Cancelar
                         </button>
                     </div>
@@ -141,7 +138,7 @@
     <script src="../js/auth.js"></script>
     <script src="../js/menu.js"></script>
     <script src="../js/notifications.js"></script>
-    <script src="../js/nueva-reserva.js"></script>
+    <script src="../js/nuevo-departamento.js"></script>
     <script src="../js/mobile-auto.js"></script>
 </body>
 </html>
