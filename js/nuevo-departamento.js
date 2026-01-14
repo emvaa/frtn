@@ -47,7 +47,7 @@ async function crearDepartamento(e) {
     }
     
     if (!formData.numero) {
-        showError('Número del departamento es requerido');
+        showError('Nombre del departamento es requerido');
         return;
     }
     
