@@ -1,11 +1,14 @@
 let clientesData = [];
 let departamentosData = [];
+let edificiosData = [];
+let departamentosPorEdificio = [];
 
 document.addEventListener('DOMContentLoaded', async function() {
     await cargarClientes();
-    await cargarDepartamentos();
+    await cargarEdificios();
     
     // Event listeners
+    document.getElementById('edificioId').addEventListener('change', onEdificioChange);
     document.getElementById('departamentoId').addEventListener('change', mostrarInfoDepartamento);
     document.getElementById('reservaForm').addEventListener('submit', crearReserva);
     
@@ -28,16 +31,55 @@ async function cargarClientes() {
     }
 }
 
-async function cargarDepartamentos() {
+async function cargarEdificios() {
     try {
+        const data = await apiRequest('/edificios');
+        edificiosData = data.edificios || [];
+
+        const select = document.getElementById('edificioId');
+        select.innerHTML = '<option value="">Seleccione un edificio</option>' +
+            edificiosData.map(e => `<option value="${e.id}">${e.nombre}</option>`).join('');
+
+        // Inicialmente, deshabilitar departamento hasta elegir edificio
+        const selectDepto = document.getElementById('departamentoId');
+        selectDepto.disabled = true;
+        selectDepto.innerHTML = '<option value="">Primero seleccione un edificio</option>';
+    } catch (error) {
+        console.error('Error:', error);
+        showError('Error al cargar edificios');
+    }
+}
+
+async function onEdificioChange() {
+    const edificioId = document.getElementById('edificioId').value;
+    const selectDepto = document.getElementById('departamentoId');
+    const infoDiv = document.getElementById('infoDepartamento');
+    infoDiv.textContent = '';
+    document.getElementById('monto').value = '';
+
+    if (!edificioId) {
+        selectDepto.disabled = true;
+        selectDepto.innerHTML = '<option value="">Primero seleccione un edificio</option>';
+        return;
+    }
+
+    try {
+        // Traer departamentos disponibles y filtrar por edificio en frontend
+        // Nota: este endpoint NO filtra por "requiereLimpieza", así que permite reservar aunque esté sucio.
         const data = await apiRequest('/departamentos/disponibles');
         departamentosData = data.departamentos || [];
-        
-        const select = document.getElementById('departamentoId');
-        select.innerHTML = '<option value="">Seleccione un departamento</option>' +
-            departamentosData.map(d => `
+        departamentosPorEdificio = departamentosData.filter(d => String(d.edificioId) === String(edificioId));
+
+        selectDepto.disabled = false;
+        if (departamentosPorEdificio.length === 0) {
+            selectDepto.innerHTML = '<option value="">No hay departamentos disponibles en este edificio</option>';
+            return;
+        }
+
+        selectDepto.innerHTML = '<option value="">Seleccione un departamento</option>' +
+            departamentosPorEdificio.map(d => `
                 <option value="${d.id}">
-                    ${d.numero} - ${d.edificio.nombre} (₲${d.precio.toLocaleString('es-PY')}/día)
+                    ${d.numero} (₲${d.precio.toLocaleString('es-PY')}/día)
                 </option>
             `).join('');
     } catch (error) {
@@ -55,7 +97,7 @@ function mostrarInfoDepartamento() {
         return;
     }
     
-    const depto = departamentosData.find(d => d.id == deptoId);
+    const depto = (departamentosPorEdificio.length ? departamentosPorEdificio : departamentosData).find(d => d.id == deptoId);
     if (depto) {
         infoDiv.textContent = `${depto.habitaciones} hab, ${depto.banos} baños - Precio: ₲${depto.precio.toLocaleString('es-PY')}/día`;
         
@@ -71,7 +113,7 @@ function calcularMonto() {
     
     if (!deptoId || !fechaInicio || !fechaFin) return;
     
-    const depto = departamentosData.find(d => d.id == deptoId);
+    const depto = (departamentosPorEdificio.length ? departamentosPorEdificio : departamentosData).find(d => d.id == deptoId);
     if (!depto) return;
     
     // Calcular días
@@ -147,8 +189,9 @@ async function crearReserva(e) {
     };
     
     // Validaciones
-    if (!formData.clienteId || !formData.departamentoId) {
-        showError('Seleccione cliente y departamento');
+    const edificioId = document.getElementById('edificioId').value;
+    if (!formData.clienteId || !edificioId || !formData.departamentoId) {
+        showError('Seleccione cliente, edificio y departamento');
         return;
     }
     
