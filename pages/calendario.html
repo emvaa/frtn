@@ -110,6 +110,12 @@
         .reserva-item:hover {
             transform: scale(1.05);
         }
+
+        .reserva-item.highlight {
+            outline: 3px solid #ef4444;
+            outline-offset: 2px;
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
+        }
         
         .reserva-item.check-in {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
@@ -264,10 +270,38 @@
                        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
         document.addEventListener('DOMContentLoaded', async function() {
+            // Si viene desde Reservas con ?reservaId=, enfocamos esa reserva
+            const params = new URLSearchParams(window.location.search);
+            const reservaIdParam = params.get('reservaId');
+            window.__reservaFocusId = reservaIdParam ? parseInt(reservaIdParam, 10) : null;
+
             await cargarEdificios();
             await cargarDepartamentos();
             renderCalendario();
-            cargarReservasDelMes();
+            await cargarReservasDelMes();
+
+            // Aplicar foco (mes + filtros) si existe
+            if (window.__reservaFocusId) {
+                const r = reservasDelMes.find(x => x.id === window.__reservaFocusId);
+                if (r) {
+                    // Ir al mes del check-in
+                    mesActual = new Date(r.fechaInicio);
+
+                    // Setear filtros para dejar visible esa reserva (sin agregar UI nueva)
+                    const selEd = document.getElementById('filterEdificio');
+                    const selDep = document.getElementById('filterDepartamento');
+                    selEd.value = String(r.departamento.edificioId);
+                    selDep.value = String(r.departamentoId);
+
+                    await cargarReservasDelMes();
+
+                    // Scroll suave hacia la primera aparición de la reserva
+                    setTimeout(() => {
+                        const el = document.querySelector(`.reserva-item[data-reserva-id="${window.__reservaFocusId}"]`);
+                        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 50);
+                }
+            }
         });
 
         async function cargarEdificios() {
@@ -407,8 +441,9 @@
                 icono = '🚪';
             }
             
+            const highlight = window.__reservaFocusId && reserva.id === window.__reservaFocusId ? ' highlight' : '';
             return `
-                <div class="${clase}" onclick="event.stopPropagation(); verReserva(${reserva.id})" title="${reserva.cliente.nombre} - ${reserva.departamento.numero}">
+                <div class="${clase}${highlight}" data-reserva-id="${reserva.id}" onclick="event.stopPropagation(); verReserva(${reserva.id})" title="${reserva.cliente.nombre} - ${reserva.departamento.numero}">
                     ${icono} ${reserva.departamento.numero}
                 </div>
             `;
